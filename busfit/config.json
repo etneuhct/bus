@@ -1,0 +1,12 @@
+{
+  "django_apps": [
+    "account",
+    "authtools",
+    "crispy_forms",
+    "easy_thumbnails",
+    "bootstrapform",
+    "pinax_theme_bootstrap",
+    "webpack_loader",
+    "profiles"
+  ]
+}
