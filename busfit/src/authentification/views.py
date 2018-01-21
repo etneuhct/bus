@@ -7,8 +7,8 @@ from django.urls import reverse
 import httplib2
 from django.http import HttpResponse
 from apiclient import discovery
-
 # Create your views here.
+import json
 
 class GoogleOauth(View):
 
@@ -42,8 +42,10 @@ class GoogleOauthSucceed(View):
         http = credentials.authorize(http)
         people_service = discovery.build(serviceName='people', version='v1', http=http)
         people_resource = people_service.people()
-        people_document = people_resource.get(resourceName="people/me", personFields="emailAddresses").execute()
-        return HttpResponse("ok")
+        people_document = people_resource.get(resourceName="people/me", personFields="names").execute()
+        name = people_document["names"]
+        name = json.dumps(name[0])
+        return HttpResponse(name)
 
 class GoogleOauthFailed(View):
     @staticmethod

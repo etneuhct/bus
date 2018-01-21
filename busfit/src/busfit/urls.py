@@ -20,8 +20,8 @@ urlpatterns = [
     url(r"account/social/accounts/", RedirectView.as_view(url='/account/settings/')),
     url(r"^account/", include("account.urls")),
     url(r"^connexion/oauth", GoogleOauth.as_view(), name='google_oauth'),
-    url(r"^connexion/success", GoogleOauthSucceed.as_view(), name='google_oauth'),
-    url(r"^connexion/fail", GoogleOauthFailed.as_view(), name='google_oauth')
+    url(r"^connexion/success", GoogleOauthSucceed.as_view(), name='google_oauth_succeed'),
+    url(r"^connexion/fail", GoogleOauthFailed.as_view(), name='google_oauth_failed')
 ]
 
 # User-uploaded files like profile pics need to be served in development
