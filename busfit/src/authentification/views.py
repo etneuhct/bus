@@ -35,6 +35,7 @@ class GoogleOauth(View):
             return redirect(reverse('google_oauth_succeed'))
 
 class GoogleOauthSucceed(View):
+
     @staticmethod
     def get(request):
         credentials = client.OAuth2Credentials.from_json(request.session["credentials"])
@@ -43,8 +44,7 @@ class GoogleOauthSucceed(View):
         people_service = discovery.build(serviceName='people', version='v1', http=http)
         people_resource = people_service.people()
         people_document = people_resource.get(resourceName="people/me", personFields="names").execute()
-        name = people_document["names"]
-        name = json.dumps(name[0])
+        name = people_document["names"][0]["displayName"]
         return HttpResponse(name)
 
 class GoogleOauthFailed(View):
