@@ -3,16 +3,10 @@ import time
 import json
 
 
-def check_wrist_position(x, y):
-    if y < 0:
-        print('Below')
-    if y > 0:
-        print('Above')
-
-
-def jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y):
+def jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
     if max_left_wrist_y - min_left_wrist_y > 1 and max_right_wrist_y - min_right_wrist_y > 1:
-        return True
+        if knee_distance_x > 0.2:
+            return True
     else:
         return False
 
@@ -22,14 +16,12 @@ with nui.Runtime() as kinect:
     start = time.clock()
     counter = 0
 
-    current_max = 0
-    max_deviation = 0
-
     min_right_wrist_y = 1
     max_right_wrist_y = -1
-
     min_left_wrist_y = 1
     max_left_wrist_y = -1
+
+    knee_distance_x = 0
 
     while counter < 5:
         frame = kinect.skeleton_engine.get_next_frame()
@@ -64,6 +56,8 @@ with nui.Runtime() as kinect:
                 left_knee_positions_x = positions[nui.JointId.knee_left].x
                 left_knee_positions_y = positions[nui.JointId.knee_right].y
 
+                knee_distance_x = abs(right_knee_positions_x - left_knee_positions_x)
+
                 if right_wrist_positions_y < min_right_wrist_y and left_wrist_position_y < min_left_wrist_y:
                     min_right_wrist_y = right_wrist_positions_y
                     min_left_wrist_y = left_wrist_position_y
@@ -72,14 +66,11 @@ with nui.Runtime() as kinect:
                     max_left_wrist_y = left_wrist_position_y
 
                 if min_left_wrist_y != 1 and max_left_wrist_y != -1:
-                    if jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y):
+                    if jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
                         min_right_wrist_y = 1
                         max_right_wrist_y = -1
                         min_left_wrist_y = 1
                         max_left_wrist_y = -1
+                        knee_distance_x = 0
                         counter += 1
                         print(str(counter))
-
-                # check_wrist_position(right_wrist_positions_x, right_wrist_positions_y)
-                #print('Left Wrist x: ' + str(left_wrist_position_x) + ' Left Wrist y: ' + str(left_wrist_position_y))
-                #print('Right Wrist x: ' + str(right_wrist_positions_x) + ' Right Wrist y: ' + str(right_wrist_positions_y))
