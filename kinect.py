@@ -10,11 +10,16 @@ def jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_le
     else:
         return False
 
+
+def touch_toe(wrist_position_y, knee_position_y):
+    return (wrist_position_y - knee_position_y) < -0.5
+
 with nui.Runtime() as kinect:
     kinect.camera.elevation_angle = 0
     kinect.skeleton_engine.enable=True
     start = time.clock()
-    counter = 0
+    counter_jacks = 0
+    counter_toe = 0
 
     min_right_wrist_y = 1
     max_right_wrist_y = -1
@@ -22,8 +27,10 @@ with nui.Runtime() as kinect:
     max_left_wrist_y = -1
 
     knee_distance_x = 0
+    wrist_position_y = 0
+    knee_position_y = -2
 
-    while counter < 5:
+    while counter_jacks < 5:
         frame = kinect.skeleton_engine.get_next_frame()
         # if time.clock() - start > 5:
         #    break
@@ -64,13 +71,22 @@ with nui.Runtime() as kinect:
                 if right_wrist_positions_y > max_left_wrist_y and left_wrist_position_y > max_left_wrist_y:
                     max_right_wrist_y = right_wrist_positions_y
                     max_left_wrist_y = left_wrist_position_y
+                if max_right_wrist_y > 0.5:
+                    if min_left_wrist_y != 1 and max_left_wrist_y != -1:
+                        if jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
+                            min_right_wrist_y = 1
+                            max_right_wrist_y = -1
+                            min_left_wrist_y = 1
+                            max_left_wrist_y = -1
+                            knee_distance_x = 0
+                            counter_jacks += 1
+                            print('Number of jumping jacks: ' + str(counter))
 
-                if min_left_wrist_y != 1 and max_left_wrist_y != -1:
-                    if jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
-                        min_right_wrist_y = 1
-                        max_right_wrist_y = -1
-                        min_left_wrist_y = 1
-                        max_left_wrist_y = -1
-                        knee_distance_x = 0
-                        counter += 1
-                        print(str(counter))
+                wrist_position_y = min(right_wrist_positions_y, left_wrist_position_y)
+                knee_position_y = min(right_knee_positions_y, left_knee_positions_y)
+
+                if touch_toe(wrist_position_y, knee_position_y):
+                    counter_toe += 1
+                    wrist_position_y = 0
+                    knee_position_y = -2
+                    print('You touched your toe: ' + counter_toe + ' time(s).')
