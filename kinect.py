@@ -2,16 +2,21 @@ from pykinect import nui
 import time
 
 import requests
+import json
 
-url = "https://localhost:3001/api"
+url = "http://localhost:3001/api"
+last_post_date = -1
 
 def send_data_counter(counter, exercise):
     data = {"counter": counter, "drill": exercise}
-    requests.post(url, data=data)
+    requests.get('{}/{}/{}'.format(url, counter, exercise))
 
 def send_data_far(far):
-    data = {"too far": far}
-    requests.post(url, data=data)
+    global last_post_date
+    if last_post_date == -1 or time.clock() - last_post_date > 1:
+        # data = {"tooFar": far}
+        requests.get('{}/{}'.format(url , 1 if far else 0))
+        last_post_date = time.clock()
 
 def jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
     if max_left_wrist_y - min_left_wrist_y > 1 and max_right_wrist_y - min_right_wrist_y > 1:
@@ -49,7 +54,7 @@ with nui.Runtime() as kinect:
             # if time.clock() - start > 5:
             #    break
             for skeleton in frame.SkeletonData:
-
+                seen = False
                 if skeleton.eTrackingState != nui.SkeletonTrackingState.TRACKED:
                     send_data_far(True)
 
@@ -58,6 +63,10 @@ with nui.Runtime() as kinect:
                     positions = skeleton.get_skeleton_positions()
                     if positions[nui.JointId.head].z > 2:
                         # Coordinates of points of interest
+                        
+                        if not seen:
+                            print(' I see you !')
+                            seen = True
                         # Wrists
                         right_wrist_positions_x = positions[nui.JointId.wrist_right].x
                         right_wrist_positions_y = positions[nui.JointId.wrist_right].y
@@ -113,11 +122,18 @@ with nui.Runtime() as kinect:
                         #print('Knee y: ' + str(knee_position_y))
                         if counter_jacks < 5:
                             continue
+                         
 
                         if (last_count_toe_date == -1 or time.clock() - last_count_toe_date >= 2) and touch_toe(shoulder_position_y):
                             last_count_toe_date = time.clock()
                             counter_toe += 1
                             shoulder_position_y = 2
-                            send_data_counter(counter_toe, "touch_toe")
+                            send_data_counter(counter_toe, "touch_toe") 
                             print('You touched your toe: ' + str(counter_toe) + ' time(s).')
-
+                        if counter_jacks == 5 and counter_toe == 0:
+                            send_data_counter(counter_toe, "touch_toe")
+                        if counter_toe == 5:    
+                            send_data_counter(0, "jumping_jacks")
+                            
+if __name__ == '__main__':
+    last_post_date = -1
