@@ -6,4 +6,4 @@ de Montréal. Les usagers de la STM pourraient faire un peu de sport en attendan
 
 ## Client de jeu
 Le client de jeu est une application web Vue.js reliée en temps réel à un serveur NodeJS par une connexion WebSocket (socket.io).
-Le serveur NodeJS consomme les données produites par le programme kinect.py que nous avons développée pour interpréter les données de **positions de joints du squelette** de telle sorte à reconnaitre les mouvements de fitness. 
+Le serveur NodeJS consomme les données produites par le programme kinect.py que nous avons développé pour interpréter les données de **positions de joints du squelette** de telle sorte à reconnaitre les mouvements de fitness. 
