@@ -17,7 +17,6 @@ def send_data_far(far):
         requests.get('{}/{}'.format(url , 1 if far else 0))
         last_post_date = time.clock()
 
-
 def too_close(positions):
     if positions[nui.JointId.head].z <= 2:
         return True
@@ -193,5 +192,6 @@ def start_touch_toes(max_drill):
                                     return
 
 start_touch_toes(4)
+
 if __name__ == '__main__':
     last_post_date = -1
