@@ -1,0 +1,20 @@
+{% extends "bootswatch/components/dialog.html" %}
+{% block dialog_attrs %}id="signupModal" {% endblock %}
+{% block title %}
+<!-- brand -->
+<span style="background-color:orange;display:inline-block;height:21px;margin-right:4px;width:21px;"></span>
+Airkiv
+{% endblock %}
+
+{% block title_class %} text-center {% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-12">
+        {% include "registration.html" %}
+    </div>
+</div>
+{% endblock %}
+{% block actions %}
+    <button type="button" class="btn btn-primary form-submit" data-form="signup">Continuer</button>
+{% endblock %}

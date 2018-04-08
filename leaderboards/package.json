@@ -1,0 +1,38 @@
+{
+  "name": "perfectstart",
+  "version": "1.0.0",
+  "description": "The perfect django project starting template ",
+  "main": "webpack.base.config.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "nodemon --watch webpack.dev.config.js --exec \"webpack-dev-server --config webpack.dev.config.js  --env development\"",
+    "build:dev": "webpack --config webpack.dev.config.js",
+    "build:prod": "webpack --config webpack.prod.config.js --progress --colors",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/konoufo/edge.git"
+  },
+  "author": "konoufo",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/konoufo/edge/issues"
+  },
+  "homepage": "https://github.com/konoufo/edge#readme",
+  "devDependencies": {
+    "css-loader": "^0.28.4",
+    "cssnano": "^3.10.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.2",
+    "nodemon": "^1.11.0",
+    "optimize-css-assets-webpack-plugin": "^2.0.0",
+    "url-loader": "^0.5.8",
+    "webpack": "^2.6.1",
+    "webpack-bundle-tracker": "^0.2.0",
+    "webpack-dev-server": "^2.4.5",
+    "webpack-merge": "^4.1.0"
+  }
+}
