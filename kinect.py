@@ -1,35 +1,41 @@
 from pykinect import nui
 import time
 import requests
-import json
 
 url = "http://localhost:3001/api"
 last_post_date = -1
+position_was_bad = False
+
 
 def send_data_counter(counter, exercise):
-    data = {"counter": counter, "drill": exercise}
     requests.get('{}/{}/{}'.format(url, counter, exercise))
+
 
 def send_data_far(far):
     global last_post_date
     if last_post_date == -1 or time.clock() - last_post_date > 1:
-        # data = {"tooFar": far}
-        requests.get('{}/{}'.format(url , 1 if far else 0))
+        requests.get('{}/{}'.format(url, 1 if far else 0))
         last_post_date = time.clock()
+
 
 def too_close(positions):
     if positions[nui.JointId.head].z <= 2:
         return True
 
-def jumping_jacks(min_right_wrist_y, min_left_wrist_y, max_right_wrist_y, max_left_wrist_y, knee_distance_x):
-    if max_left_wrist_y - min_left_wrist_y > 1 and max_right_wrist_y - min_right_wrist_y > 1:
-        if knee_distance_x > 0.2:
-            return True
-    else:
-        return False
+
+def jumping_jacks(min_right_wrist_y, min_left_wrist_y,
+                  max_right_wrist_y, max_left_wrist_y,
+                  knee_distance_x):
+    if max_left_wrist_y - min_left_wrist_y > 1:
+        if max_right_wrist_y - min_right_wrist_y > 1:
+            if knee_distance_x > 0.2:
+                return True
+    return False
+
 
 def touch_toe(shoulder_position_y):
-    return  shoulder_position_y < 0.15
+    return shoulder_position_y < 0.15
+
 
 def start_jumping_jacks(max_drill):
 
@@ -39,9 +45,7 @@ def start_jumping_jacks(max_drill):
             kinect.skeleton_engine.enable=True
             counter_jacks = 0
             counter_toe = 0
-
             last_count_toe_date = -1
-
             min_right_wrist_y = 1
             max_right_wrist_y = -1
             min_left_wrist_y = 1
@@ -113,12 +117,12 @@ def start_jumping_jacks(max_drill):
                                             print("gg wp")
                                             return
 
-def start_touch_toes(max_drill):
 
+def start_touch_toes(max_drill):
     with nui.Runtime() as kinect:
         while 1:
             kinect.camera.elevation_angle = 0
-            kinect.skeleton_engine.enable=True
+            kinect.skeleton_engine.enable = True
             counter_jacks = 0
             counter_toe = 0
 
@@ -142,7 +146,6 @@ def start_touch_toes(max_drill):
 
                         if not too_close(positions):
                             # Coordinates of points of interest
-
                             if not seen:
                                 #print(' I see you !')
                                 seen = True
@@ -186,7 +189,7 @@ def start_touch_toes(max_drill):
                                 last_count_toe_date = time.clock()
                                 counter_toe += 1
                                 print('You touched your toe: ' + str(counter_toe) + ' time(s).')
-                                send_data_counter(counter_jacks, "touch_toe")
+                                send_data_counter(counter_toe, "touch_toe")
                                 if counter_toe == max_drill:
                                     print("gg wp")
                                     return

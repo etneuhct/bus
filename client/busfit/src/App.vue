@@ -26,12 +26,16 @@
       </div>
     </animated-bounce-in-up>
     <animated-bounce-in-up>
-      <div class="container-thought">
+      <div class="container-thought" v-if="tooClose">
         <p class="thought" v-if="tooClose">
           Tenez-vous bien dans mon champ de vision pour jouer !
         </p>
       </div>
     </animated-bounce-in-up>
+    <div class="splash" v-if="!gameStarted">
+      <h2>Welcome to Busfit!</h2>
+      <p>Get rewarded to stay fit at the bus station.</p>
+    </div>
   </div>
 </template>
 
@@ -44,11 +48,14 @@ export default {
     },
     data: function(data){
       console.log('io.emit("data")', data);
-      this.tooClose = !!data.tooClose;
+      this.gameStarted = true;
       if (data.drill){
-        this.totalScore += data.drill != this.currentDrill.drill ? 
-          this.currentDrill.counter : 0;
+        this.totalScore += !this.currentDrill || data.drill != this.currentDrill.drill ? 
+          this.currentDrill ? this.currentDrill.counter : 0 
+          : 0;
         this.currentDrill = data;
+      } else {
+        this.tooClose = !!data.tooClose;
       }
     }
   },
@@ -57,14 +64,14 @@ export default {
       gameStarted: false,
       goodAttemptDetected: false,
       attemptDetected: false,
-      tooClose: false,
+      tooClose: true,
       currentDrill: null,
       totalScore: 0
     }
   },
   computed: {
     animation_file: function(){
-      return require('./assets/' + (this.currentDrill ? this.currentDrill.drill : 'jumping_jacks') + '.gif');
+      return require('./assets/' + (this.currentDrill ? this.currentDrill.drill : 'touch_toe') + '.gif');
     },
     score: function(){
       var score = this.currentDrill ? this.currentDrill.counter : 0;
@@ -111,10 +118,36 @@ nav {
   top: 0;
 }
 
+.splash {
+  background-color: rgba(0, 0, 0, .7);
+  color: white;
+  height: 80%;
+  left: 50%;
+  margin: 0 auto;
+  padding: 16px 48px;
+  position: fixed;
+  text-align: center;
+  transform: translateX(-50%);
+  top: 0;
+  width: 80%;
+}
+
+.splash p {
+  color: yellow;
+  font-size: 16px;
+}
+
 .container-thought {
   position: absolute;
   left: 30%;
   top: 60px;
+  width: 400px;
+}
+
+.container-thought p {
+  line-height: 1.4;
+  padding: 16px 8px;
+  width: 100%;
 }
 
 #scorecard {

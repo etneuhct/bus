@@ -21,14 +21,14 @@ var sendToClient = function(data){
 app.get('/api/:farOrNot', function(req, res, next) {  
     var body = req.body || req.params || req.query;
     console.log(body);
-    sendToClient({tooClose: body.farOrNot ? true : false});
+    sendToClient({tooClose: body.farOrNot == 1 ? true : false});
     res.json({success: true});
 });
 
 app.get('/api/:counter/:drill', function(req, res, next) {  
     var body = req.body || req.params || req.query;
     console.log(body);
-    sendToClient({counter: body.counter, drill: body.drill});
+    sendToClient({counter: Number(body.counter), drill: body.drill});
     res.json({success: true});
 });
 
