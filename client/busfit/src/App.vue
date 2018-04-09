@@ -44,9 +44,12 @@ export default {
     },
     data: function(data){
       console.log('io.emit("data")', data);
-      this.tooClose = data.tooClose === true ? true : data.tooClose === false ? 
-      false : this.tooClose;
-      data.drill && this.drillCounters.push(data);
+      this.tooClose = !!data.tooClose;
+      if (data.drill){
+        this.totalScore += data.drill != this.currentDrill.drill ? 
+          this.currentDrill.counter : 0;
+        this.currentDrill = data;
+      }
     }
   },
   data:  function() {
@@ -55,17 +58,17 @@ export default {
       goodAttemptDetected: false,
       attemptDetected: false,
       tooClose: false,
-      drillCounters: [],
-      oldScore: 0
+      currentDrill: null,
+      totalScore: 0
     }
   },
   computed: {
     animation_file: function(){
-      return require('./assets/' + (this.drillCounters[-1] ? this.drillCounters[-1].drill : 'jumping_jacks') + '.gif');
+      return require('./assets/' + (this.currentDrill ? this.currentDrill.drill : 'jumping_jacks') + '.gif');
     },
     score: function(){
-      var score = this.drillCounters[-1] ? this.drillCounters[-1].counter : 0;
-      score += (this.drillCounters[-2] ? this.drillCounters[-2].counter : 0);
+      var score = this.currentDrill ? this.currentDrill.counter : 0;
+      score += this.totalScore;
       return score;
     }
   },
