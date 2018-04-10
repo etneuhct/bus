@@ -48,10 +48,10 @@ export default {
     },
     data: function(data){
       console.log('io.emit("data")', data);
-      this.gameStarted = true;
       if (data.drill){
-        this.totalScore += !this.currentDrill || data.drill != this.currentDrill.drill ? 
-          this.currentDrill ? this.currentDrill.counter : 0 
+        this.gameStarted = true;
+        this.totalScore += !this.currentDrill || data.drill != this.currentDrill.drill ?
+          this.currentDrill ? this.currentDrill.counter : 0
           : 0;
         this.currentDrill = data;
       } else {

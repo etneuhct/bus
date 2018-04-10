@@ -194,7 +194,7 @@ def start_touch_toes(max_drill):
                                     print("gg wp")
                                     return
 
-start_touch_toes(4)
+start_jumping_jacks(4)
 
 if __name__ == '__main__':
     last_post_date = -1
